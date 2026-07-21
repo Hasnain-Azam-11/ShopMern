@@ -1,24 +1,33 @@
 import { ShoppingCart, User, Menu, Heart, X, Minus, Plus, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../Context/CartContext";   // ← import
+import { useCart } from "../Context/CartContext";
+import { useWishlist } from "../Context/WishlistContext";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen]       = useState(false);
   const [cartOpen, setCartOpen]       = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
-  const { cart, removeFromCart, updateQuantity } = useCart();  // ← from context
+  const { cart, removeFromCart, updateQuantity } = useCart();
+  const { wishlist, fetchWishlist } = useWishlist();
+  
+  const userId = "TEMP_USER_ID";
+  const navigate = useNavigate();
 
-  // derive these from real cart
+  // derive cart values
   const cartItems  = cart?.items || [];
   const cartCount  = cartItems.length;
   const total      = cart?.totalAmount || 0;
 
-  const userId    = "TEMP_USER_ID"; // replace with real auth user later
-  const navigate  = useNavigate();
+  // derive wishlist values
+  const wishlistCount = wishlist?.items?.length || 0;
+
+  useEffect(() => {
+    fetchWishlist(userId);
+  }, [fetchWishlist, userId]);
 
   return (
     <>
@@ -41,8 +50,19 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" className="text-black hover:text-gray-400 hover:bg-gray-100">
+              {/* Updated Heart Button with Wishlist Count */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative text-black hover:text-gray-400 hover:bg-gray-100"
+                onClick={() => navigate("/wishlist")}
+              >
                 <Heart size={18} />
+                {wishlistCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-xs bg-black text-white">
+                    {wishlistCount}
+                  </Badge>
+                )}
               </Button>
 
               <Button
@@ -76,7 +96,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Profile Modal — unchanged */}
+          {/* Profile Modal */}
           {profileOpen && (
             <>
               <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setProfileOpen(false)} />
@@ -96,7 +116,7 @@ export default function Navbar() {
                 </div>
                 <div className="py-2">
                   <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">My Orders</button>
-                  <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">Wishlist</button>
+                  <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors" onClick={() => { setProfileOpen(false); navigate("/wishlist"); }}>Wishlist</button>
                   <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">Address Book</button>
                   <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">Settings</button>
                 </div>
@@ -162,21 +182,21 @@ export default function Navbar() {
                         <div className="flex items-center border border-gray-200">
                           <button
                             className="px-2 py-1 hover:bg-gray-100 transition-colors"
-                            onClick={() => updateQuantity(userId, item.productId, item.quantity - 1)}  // ← real update
+                            onClick={() => updateQuantity(userId, item.productId, item.quantity - 1)}
                           >
                             <Minus size={12} />
                           </button>
                           <span className="px-3 py-1 text-xs border-x border-gray-200">{item.quantity}</span>
                           <button
                             className="px-2 py-1 hover:bg-gray-100 transition-colors"
-                            onClick={() => updateQuantity(userId, item.productId, item.quantity + 1)}  // ← real update
+                            onClick={() => updateQuantity(userId, item.productId, item.quantity + 1)}
                           >
                             <Plus size={12} />
                           </button>
                         </div>
                         <button
                           className="text-xs uppercase tracking-widest text-gray-400 hover:text-black transition-colors"
-                          onClick={() => removeFromCart(userId, item.productId)}  // ← real remove
+                          onClick={() => removeFromCart(userId, item.productId)}
                         >
                           Remove
                         </button>
