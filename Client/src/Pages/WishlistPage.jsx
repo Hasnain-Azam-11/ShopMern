@@ -7,16 +7,25 @@ import { useCart } from "../Context/CartContext";
 import { Trash2, ShoppingCart, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { getCurrentUserId } from "../utils/auth";
 
 function WishlistPage() {
     const { wishlist, fetchWishlist, removeFromWishlist } = useWishlist();
     const { addToCart } = useCart();
     const navigate  = useNavigate();
-    const userId    = "TEMP_USER_ID";
+
+    // ✅ UPDATED — removed the blocking `if (!userId) { alert(...); return; }` that was
+    // here before useEffect. That broke Rules of Hooks (useEffect below would get
+    // skipped whenever userId was null). Now userId is just a plain value, and we
+    // render a proper logged-out state further down instead of returning early here.
+    const userId = getCurrentUserId();
+
     const items     = wishlist?.items || [];
 
     useEffect(() => {
-        fetchWishlist(userId);
+        if (userId) {
+            fetchWishlist(userId);
+        }
     }, [fetchWishlist, userId]);
 
     const handleRemove = async (productId) => {
@@ -29,6 +38,28 @@ function WishlistPage() {
         await removeFromWishlist(userId, item.productId);
         toast.success("Moved to cart!");
     };
+
+    // ✅ UPDATED — proper logged-out screen instead of an alert + silent blank page
+    if (!userId) {
+        return (
+            <>
+                <NavBar />
+                <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-gray-50">
+                    <Heart size={48} className="text-gray-200" />
+                    <p className="text-sm uppercase tracking-widest text-gray-400">
+                        Please log in to view your wishlist
+                    </p>
+                    <button
+                        onClick={() => navigate("/login")}
+                        className="bg-black text-white text-xs uppercase tracking-widest px-8 py-3 hover:bg-gray-800 transition-colors"
+                    >
+                        Sign In
+                    </button>
+                </div>
+                <Footer />
+            </>
+        );
+    }
 
     return (
         <>

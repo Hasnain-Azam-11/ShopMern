@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { notifyAuthChange } from "../utils/auth"; // ✅ UPDATED — added import
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -69,6 +70,7 @@ function Login() {
         });
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
+        notifyAuthChange(); // ✅ UPDATED — tells CartContext/WishlistContext to refresh userId + refetch this user's own cart/wishlist immediately, since those providers mount once and won't otherwise notice a new login without a full page reload
         setTimeout(() => navigate('/'), 1000);
       } else {
         // ❌ ERROR - Wrong email or password

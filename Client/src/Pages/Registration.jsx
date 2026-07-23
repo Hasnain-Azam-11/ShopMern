@@ -14,10 +14,31 @@ function Register() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState(''); // ✅ UPDATED — added state, was missing before (Confirm Password field had no onChange at all)
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false); // ✅ UPDATED — added, disables button + shows loading state while request is in flight
 
   const handleSubmission = async (e) => {
     e.preventDefault();
+
+    // ✅ UPDATED — added basic client-side validation before hitting the API
+    if (!firstName || !lastName || !email || !phoneNumber || !password || !confirmPassword) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters");
+      return;
+    }
+
+    setIsSubmitting(true); // ✅ UPDATED
+
     try {
       const response = await fetch('http://localhost:5000/api/users/createUser', {
         method: 'POST',
@@ -38,10 +59,16 @@ function Register() {
 
       if (response.ok) {
         navigate('/login');
+      } else {
+        // ✅ UPDATED — surfaces real backend error instead of failing silently
+        alert(data.message || "Failed to create account. Please try again.");
       }
 
     } catch (error) {
       console.log(error);
+      alert("Something went wrong. Please check your connection and try again."); // ✅ UPDATED — surfaces network/crash errors
+    } finally {
+      setIsSubmitting(false); // ✅ UPDATED
     }
   }
 
@@ -100,6 +127,7 @@ function Register() {
                   <Input
                     type="text"
                     placeholder="John"
+                    value={firstName} // ✅ UPDATED — made controlled input (was missing value prop)
                     className="pl-9 text-sm border-gray-200 focus:border-black rounded-none h-11"
                     onChange={(e) => setFirstName(e.target.value)}
                   />
@@ -114,6 +142,7 @@ function Register() {
                   <Input
                     type="text"
                     placeholder="Doe"
+                    value={lastName} // ✅ UPDATED — made controlled input
                     className="pl-9 text-sm border-gray-200 focus:border-black rounded-none h-11"
                     onChange={(e) => setLastName(e.target.value)}
                   />
@@ -131,6 +160,7 @@ function Register() {
                 <Input
                   type="email"
                   placeholder="john@example.com"
+                  value={email} // ✅ UPDATED — made controlled input
                   className="pl-9 text-sm border-gray-200 focus:border-black rounded-none h-11"
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -147,6 +177,7 @@ function Register() {
                 <Input
                   type="tel"
                   placeholder="+92 300 0000000"
+                  value={phoneNumber} // ✅ UPDATED — made controlled input
                   className="pl-9 text-sm border-gray-200 focus:border-black rounded-none h-11"
                   onChange={(e) => setPhoneNumber(e.target.value)}
                 />
@@ -163,6 +194,7 @@ function Register() {
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a password"
+                  value={password} // ✅ UPDATED — made controlled input
                   className="pl-9 pr-9 text-sm border-gray-200 focus:border-black rounded-none h-11"
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -186,7 +218,9 @@ function Register() {
                 <Input
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm your password"
+                  value={confirmPassword} // ✅ UPDATED — was completely unwired before, had no value or onChange
                   className="pl-9 pr-9 text-sm border-gray-200 focus:border-black rounded-none h-11"
+                  onChange={(e) => setConfirmPassword(e.target.value)} // ✅ UPDATED — added, this was missing entirely
                 />
                 <button
                   type="button"
@@ -223,9 +257,10 @@ function Register() {
             {/* Sign Up Button */}
             <Button
               type="submit"
-              className="w-full bg-black text-white text-xs uppercase tracking-widest py-5 hover:bg-gray-800 rounded-none mt-2"
+              disabled={isSubmitting} // ✅ UPDATED — prevents double-submit while request is in flight
+              className="w-full bg-black text-white text-xs uppercase tracking-widest py-5 hover:bg-gray-800 rounded-none mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Create Account
+              {isSubmitting ? "Creating Account..." : "Create Account"} {/* ✅ UPDATED — loading label */}
             </Button>
 
             {/* Divider */}

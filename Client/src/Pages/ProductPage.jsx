@@ -8,13 +8,20 @@ import { useCart } from "../Context/CartContext";
 import { useWishlist } from "../Context/WishlistContext";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { getCurrentUserId } from "../utils/auth"; 
 
 function ProductPage() {
   const { id } = useParams();
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isWishlisted, fetchWishlist } = useWishlist();
-  const userId = "TEMP_USER_ID";
-  
+
+  // ✅ UPDATED — removed the blocking `if (!userId) { alert(...); return; }` that was
+  // here before any hooks ran. That broke Rules of Hooks (every hook below would get
+  // skipped whenever userId was null) AND meant guests couldn't even view a product
+  // page. Browsing a product doesn't require login — only adding to cart/wishlist
+  // does, so those actions are guarded individually further down instead.
+  const userId = getCurrentUserId();
+
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -55,7 +62,10 @@ function ProductPage() {
 
   // Fetch wishlist when component mounts
   useEffect(() => {
-    fetchWishlist(userId);
+    // ✅ UPDATED — only fetch wishlist if actually logged in
+    if (userId) {
+      fetchWishlist(userId);
+    }
   }, [fetchWishlist, userId]);
 
   const isPerfume = () => {
@@ -90,6 +100,12 @@ function ProductPage() {
   };
 
   const handleAddToCart = () => {
+    // ✅ UPDATED — guests get sent to login instead of the whole page crashing
+    if (!userId) {
+      toast.error("Please log in to add items to your cart.");
+      return;
+    }
+
     // Watches - Color validation
     if (product.category === 'watches' && !selectedColor) {
       toast.error("Please select a color before adding to cart.");
@@ -126,6 +142,12 @@ function ProductPage() {
 
   const handleWishlistToggle = async () => {
     if (!product) return;
+
+    // ✅ UPDATED — guard added, was missing before (would have silently failed for guests)
+    if (!userId) {
+      toast.error("Please log in to use your wishlist.");
+      return;
+    }
     
     if (isWishlisted(product._id)) {
       await removeFromWishlist(userId, product._id);

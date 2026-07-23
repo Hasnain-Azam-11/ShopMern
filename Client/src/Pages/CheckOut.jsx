@@ -6,7 +6,7 @@ import { ChevronDown, Lock, Trash2, Minus, Plus, Loader2 } from "lucide-react";
 import { useCart } from "../Context/CartContext";
 import StripeWrapper from "../Components/StripeWrapper";
 import CardPaymentForm from "../Components/CardPaymentForm";
-
+import { getCurrentUserId } from "../utils/auth"; 
 function InputField({ label, placeholder, type = "text", half = false, required = false, name, value = "", onChange }) {
   return (
     <div className={half ? "flex-1" : "w-full"}>
@@ -47,10 +47,17 @@ function Checkout() {
     country: "Pakistan"
   });
 
-  const userId = "TEMP_USER_ID";
+  // ✅ UPDATED — removed the blocking `if (!userId) { alert(...); return; }` that was
+  // here before useEffect. That broke Rules of Hooks (useEffect below would get
+  // skipped whenever userId was null), causing crashes/inconsistent state instead
+  // of a clean "please log in" screen. Now userId is just a plain value, and we
+  // render a proper logged-out state further down instead of returning early here.
+  const userId = getCurrentUserId();
 
   useEffect(() => {
-    fetchCart(userId);
+    if (userId) {
+      fetchCart(userId);
+    }
   }, [fetchCart, userId]);
 
   const shippingCosts = {
@@ -195,6 +202,27 @@ function Checkout() {
     });
     await submitOrderRequest(orderData);
   };
+
+  // ✅ UPDATED — proper logged-out screen instead of an alert + silent blank page
+  if (!userId) {
+    return (
+      <>
+        <NavBar />
+        <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-gray-50">
+          <p className="text-sm uppercase tracking-widest text-gray-400">
+            Please log in to checkout
+          </p>
+          <Button
+            className="bg-black text-white text-xs uppercase tracking-widest px-8 py-3 hover:bg-gray-800"
+            onClick={() => window.location.href = "/login"}
+          >
+            Sign In
+          </Button>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   if (cartLoading) {
     return (

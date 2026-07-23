@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../Context/CartContext";
 import { useWishlist } from "../Context/WishlistContext";
+import { getCurrentUser, getCurrentUserId, notifyAuthChange } from "../utils/auth"; // ✅ UPDATED — added getCurrentUser + notifyAuthChange imports
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen]       = useState(false);
@@ -13,9 +14,14 @@ export default function Navbar() {
 
   const { cart, removeFromCart, updateQuantity } = useCart();
   const { wishlist, fetchWishlist } = useWishlist();
-  
-  const userId = "TEMP_USER_ID";
+
   const navigate = useNavigate();
+
+  // ✅ UPDATED — moved userId/user lookup here, removed the early `return` that was
+  // breaking Rules of Hooks (useEffect below was being skipped conditionally)
+  const currentUser = getCurrentUser();
+  const userId = getCurrentUserId();
+  const isLoggedIn = !!userId;
 
   // derive cart values
   const cartItems  = cart?.items || [];
@@ -26,8 +32,26 @@ export default function Navbar() {
   const wishlistCount = wishlist?.items?.length || 0;
 
   useEffect(() => {
-    fetchWishlist(userId);
+    // ✅ UPDATED — only fetch wishlist if actually logged in, and hook always runs (no early return above it anymore)
+    if (userId) {
+      fetchWishlist(userId);
+    }
   }, [fetchWishlist, userId]);
+
+  // ✅ UPDATED — helper to build display name from stored user object
+  const displayName = currentUser?.firstName
+    ? `${currentUser.firstName} ${currentUser.lastName || ""}`.trim()
+    : "Guest User";
+
+  const handleSignOut = () => {
+    // ✅ UPDATED — actually clear stored credentials on sign out
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("cart"); // ✅ UPDATED — clears old shared cart cache leftover from before the per-user fix
+    notifyAuthChange(); // ✅ NEW — tells CartContext (and WishlistContext) to reset immediately, even without a full page reload
+    setProfileOpen(false);
+    navigate("/login");
+  };
 
   return (
     <>
@@ -50,7 +74,7 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-1">
-              {/* Updated Heart Button with Wishlist Count */}
+              {/* Wishlist Button */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -111,26 +135,41 @@ export default function Navbar() {
                   <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center mx-auto mb-2">
                     <User size={20} />
                   </div>
-                  <p className="text-sm font-medium">Guest User</p>
-                  <p className="text-xs text-gray-400 mt-0.5">Not signed in</p>
+                  {/* ✅ UPDATED — shows real name when logged in, "Guest User" otherwise */}
+                  <p className="text-sm font-medium">{displayName}</p>
+                  {/* ✅ UPDATED — shows email when logged in, "Not signed in" otherwise */}
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {isLoggedIn ? currentUser?.email : "Not signed in"}
+                  </p>
                 </div>
-                <div className="py-2">
-                  <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">My Orders</button>
-                  <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors" onClick={() => { setProfileOpen(false); navigate("/wishlist"); }}>Wishlist</button>
-                  <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">Address Book</button>
-                  <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">Settings</button>
-                </div>
-                <div className="border-t border-gray-200" />
-                <div className="py-2">
-                  <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest text-red-500 hover:bg-gray-100 transition-colors" onClick={() => { setProfileOpen(false); navigate("/login"); }}>
-                    Sign Out
-                  </button>
-                </div>
-                <div className="border-t border-gray-200 px-5 py-3">
-                  <Button className="w-full bg-black text-white text-xs uppercase tracking-widest py-2 hover:bg-gray-800" onClick={() => { setProfileOpen(false); navigate("/login"); }}>
-                    Sign In / Register
-                  </Button>
-                </div>
+
+                {isLoggedIn ? (
+                  // ✅ UPDATED — logged-in menu
+                  <>
+                    <div className="py-2">
+                      <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">My Orders</button>
+                      <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors" onClick={() => { setProfileOpen(false); navigate("/wishlist"); }}>Wishlist</button>
+                      <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">Address Book</button>
+                      <button className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">Settings</button>
+                    </div>
+                    <div className="border-t border-gray-200" />
+                    <div className="py-2">
+                      <button
+                        className="w-full text-left px-5 py-2.5 text-xs uppercase tracking-widest text-red-500 hover:bg-gray-100 transition-colors"
+                        onClick={handleSignOut}
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  // ✅ UPDATED — logged-out menu
+                  <div className="border-t border-gray-200 px-5 py-3">
+                    <Button className="w-full bg-black text-white text-xs uppercase tracking-widest py-2 hover:bg-gray-800" onClick={() => { setProfileOpen(false); navigate("/login"); }}>
+                      Sign In / Register
+                    </Button>
+                  </div>
+                )}
               </div>
             </>
           )}

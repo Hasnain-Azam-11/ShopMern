@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-
+import { getCurrentUserId } from "../utils/auth";
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
@@ -7,7 +7,27 @@ export const CartProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const userId = "TEMP_USER_ID";
+    // ✅ UPDATED — userId is now REACTIVE STATE instead of a plain value computed once.
+    // CartProvider mounts only ONE time for the whole app lifetime — client-side
+    // navigation (navigate("/")) after login/logout does NOT remount it. So a plain
+    // `const userId = getCurrentUserId()` would get "frozen" at whatever it was when
+    // the app first loaded, and never notice that a different user logged in/out later.
+    // That's why a signed-out user's cart kept showing up for the next person who
+    // logged in on the same tab. Now userId updates whenever an "authChange" event
+    // fires (dispatched by Login/Logout via notifyAuthChange()).
+    const [userId, setUserId] = useState(getCurrentUserId());
+
+    useEffect(() => {
+        const handleAuthChange = () => {
+            setUserId(getCurrentUserId());
+        };
+        window.addEventListener("authChange", handleAuthChange); // ✅ NEW — same-tab login/logout
+        window.addEventListener("storage", handleAuthChange);     // ✅ NEW — other-tab login/logout
+        return () => {
+            window.removeEventListener("authChange", handleAuthChange);
+            window.removeEventListener("storage", handleAuthChange);
+        };
+    }, []);
 
     // Fetch cart with proper error handling and no race conditions
     const fetchCart = useCallback(async (userId) => {
@@ -126,6 +146,12 @@ export const CartProvider = ({ children }) => {
         
         const loadCart = async () => {
             if (!isMounted) return;
+            if (!userId) {
+                // ✅ UPDATED — if nobody is logged in, clear the cart instead of
+                // silently keeping whatever was last loaded (e.g. from a previous user)
+                setCart(null);
+                return;
+            }
             await fetchCart(userId);
         };
         
@@ -136,20 +162,32 @@ export const CartProvider = ({ children }) => {
         };
     }, [fetchCart, userId]);
 
-    // Optional: Save cart to localStorage for persistence
+    // ✅ UPDATED — cache key is now scoped per userId ("cart_<userId>") instead of a
+    // single shared "cart" key. Previously ANY logged-in user's cart got cached under
+    // the exact same key, so the next person to log in on the same browser would see
+    // the previous user's cached items before/if the real fetch corrected it. Now each
+    // user only ever reads/writes their own cache slot.
     useEffect(() => {
+        if (!userId) return;
         if (cart && cart.items && cart.items.length > 0) {
-            localStorage.setItem('cart', JSON.stringify({
+            localStorage.setItem(`cart_${userId}`, JSON.stringify({
                 data: cart,
                 timestamp: Date.now()
             }));
         }
-    }, [cart]);
+    }, [cart, userId]);
 
-    // Optional: Restore cart from localStorage on page load if API fails
+    // ✅ UPDATED — restore is now scoped to the current userId's own cache key, and
+    // re-runs whenever userId changes (e.g. after a fresh login), instead of running
+    // once on mount with a global key that ignored who was actually logged in.
     useEffect(() => {
+        if (!userId) {
+            setCart(null); // ✅ UPDATED — no logged-in user, don't show any cached cart
+            return;
+        }
+
         const restoreFromLocalStorage = () => {
-            const saved = localStorage.getItem('cart');
+            const saved = localStorage.getItem(`cart_${userId}`);
             if (saved) {
                 try {
                     const { data, timestamp } = JSON.parse(saved);
@@ -162,9 +200,9 @@ export const CartProvider = ({ children }) => {
                 }
             }
         };
-        
+
         restoreFromLocalStorage();
-    }, []);
+    }, [userId]);
 
     return (
         <CartContext.Provider value={{ 
@@ -188,4 +226,4 @@ export const useCart = () => {
         throw new Error('useCart must be used within a CartProvider');
     }
     return context;
-}; 
+};
