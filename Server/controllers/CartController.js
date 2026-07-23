@@ -59,11 +59,20 @@ const addToCart = async (req, res) => {
     }
 };
 
-// Get cart by userId
+// Get cart by userId (UPDATED)
 const getCart = async (req, res) => {
     try {
         const cart = await Cart.findOne({ userId: req.params.userId });
-        if (!cart) return res.status(404).json({ message: 'Cart not found' });
+        
+        if (!cart) {
+            // Return empty cart instead of 404
+            return res.status(200).json({
+                userId: req.params.userId,
+                items: [],
+                totalAmount: 0
+            });
+        }
+        
         res.status(200).json(cart);
     } catch (error) {
         res.status(500).json({ message: error.message });
