@@ -8,7 +8,8 @@ const userRoutes = require('./routes/UserRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const paymentRoutes = require('./routes/payment');
-const wishlistRoutes = require('./routes/wishlistRoutes');  
+const wishlistRoutes = require('./routes/wishlistRoutes');
+const { startAbandonedCartJob } = require('./jobs/abandonedCartReminder'); // NEW
 
 const app = express();
 
@@ -35,6 +36,7 @@ mongoose.connect(process.env.MONGO_URI)
     console.log('Connected to MongoDB');
     app.listen(process.env.PORT, () => {
         console.log(`Server is running on port ${process.env.PORT}`);
+        startAbandonedCartJob(); // NEW - starts the cron job once server + DB are ready
     });
 }).catch((error) => {
     console.log('Error connecting to MongoDB', error);

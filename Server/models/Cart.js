@@ -37,6 +37,19 @@ const cartSchema = new mongoose.Schema({
     totalAmount: {
         type: Number,
         default: 0
+    },
+    // NEW - needed for abandoned cart tracking
+    reminderSent: {
+        type: Boolean,
+        default: false
+    },
+    reminderSentAt: {
+        type: Date,
+        default: null
+    },
+    lastActivityAt: {
+        type: Date,
+        default: Date.now
     }
 }, { timestamps: true });
 
@@ -45,6 +58,15 @@ cartSchema.pre('save', function () {
     this.totalAmount = this.items.reduce(
         (total, item) => total + item.price * item.quantity, 0
     );
+
+    // NEW - every time the cart is actually saved with modified items,
+    // treat it as fresh activity: update lastActivityAt, and reset reminderSent
+    // so a returning user who adds something new can get reminded again later.
+    if (this.isModified('items')) {
+        this.lastActivityAt = new Date();
+        this.reminderSent = false;
+        this.reminderSentAt = null;
+    }
 });
 
 const Cart = mongoose.model('Cart', cartSchema);

@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { abandonedCartTemplate } = require('./abandonedCartTemplate');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -261,8 +262,31 @@ const sendNewsletterEmail = async (email) => {
     }
 };
 
+// NEW - Send Abandoned Cart Reminder Email
+const sendAbandonedCartEmail = async (email, userName, cartItems, totalAmount) => {
+    try {
+        const html = abandonedCartTemplate(userName, cartItems, totalAmount);
+
+        await transporter.sendMail({
+            from: `"ShopMern" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: '🛒 You left items in your cart!',
+            html: html,
+            text: `Hi ${userName || 'there'},\n\nYou left items in your cart! Your cart total is Rs. ${totalAmount.toLocaleString()}. Visit our store to complete your order.\n\n${process.env.FRONTEND_URL || process.env.CLIENT_URL || 'http://localhost:5173'}/cart`
+        });
+
+        console.log(`✅ Abandoned cart email sent to ${email}`);
+        return true;
+
+    } catch (error) {
+        console.error('❌ Failed to send abandoned cart email:', error.message);
+        return false;
+    }
+};
+
 module.exports = { 
     sendOrderConfirmationEmail,
     sendContactEmail,
-    sendNewsletterEmail
+    sendNewsletterEmail,
+    sendAbandonedCartEmail
 };
