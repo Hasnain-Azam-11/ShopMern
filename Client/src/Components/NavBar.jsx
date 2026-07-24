@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../Context/CartContext";
 import { useWishlist } from "../Context/WishlistContext";
 import { getCurrentUser, getCurrentUserId, notifyAuthChange } from "../utils/auth"; // ✅ UPDATED — added getCurrentUser + notifyAuthChange imports
-
+import { Link } from "react-router-dom";
 export default function Navbar() {
   const [menuOpen, setMenuOpen]       = useState(false);
   const [cartOpen, setCartOpen]       = useState(false);
