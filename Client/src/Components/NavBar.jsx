@@ -68,9 +68,12 @@ export default function Navbar() {
             </div>
 
             <div className="hidden md:flex items-center gap-8 text-xs font-medium text-black tracking-widest uppercase">
-              <a href="/women" className="hover:text-gray-400 transition-colors">Woman</a>
+              {/* <a href="/women" className="hover:text-gray-400 transition-colors">Woman</a>
               <a href="/men"   className="hover:text-gray-400 transition-colors">Men</a>
-              <a href="/kids"  className="hover:text-gray-400 transition-colors">Kids</a>
+              <a href="/kids"  className="hover:text-gray-400 transition-colors">Kids</a> */}
+              <Link to="/men" className="text-gray-400 hover:text-white text-sm transition-colors">Men</Link>
+            <Link to="/women" className="text-gray-400 hover:text-white text-sm transition-colors">Women</Link>
+            <Link to="/kids" className="text-gray-400 hover:text-white text-sm transition-colors">Kids</Link>
             </div>
 
             <div className="flex items-center gap-1">
