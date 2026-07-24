@@ -12,7 +12,7 @@ function OrderConfirmation() {
     useEffect(() => {
         async function fetchOrder() {
             try {
-                const res = await fetch(`http://localhost:5000/api/orders/${orderId}`);
+                const res = await fetch(`https://shopmern-9ggl.onrender.com/api/orders/${orderId}`);
                 const data = await res.json();
                 setOrder(data);
             } catch (err) {

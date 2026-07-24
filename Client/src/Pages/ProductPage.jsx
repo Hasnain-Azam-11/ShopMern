@@ -41,11 +41,11 @@ function ProductPage() {
     window.scrollTo(0, 0);  
     async function getProduct() {
       try {
-        const response = await fetch(`http://localhost:5000/api/products/${id}`);
+        const response = await fetch(`https://shopmern-9ggl.onrender.com/api/products/${id}`);
         const data = await response.json();
         setProduct(data);
         setSelectedImage(0);
-        const allRes = await fetch("http://localhost:5000/api/products");
+        const allRes = await fetch("https://shopmern-9ggl.onrender.com/api/products");
         const allData = await allRes.json();
         const related = allData.filter(
           (p) => p.category === data.category && p._id !== data._id

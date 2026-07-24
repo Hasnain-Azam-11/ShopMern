@@ -7,7 +7,7 @@ export function WishlistProvider({ children }) {
 
     const fetchWishlist = useCallback(async (userId) => {
         try {
-            const res  = await fetch(`http://localhost:5000/api/wishlist/${userId}`);
+            const res  = await fetch(`https://shopmern-9ggl.onrender.com/api/wishlist/${userId}`);
             const data = await res.json();
             setWishlist(data);
         } catch (err) {
@@ -17,7 +17,7 @@ export function WishlistProvider({ children }) {
 
     const addToWishlist = useCallback(async (userId, product) => {
         try {
-            const res = await fetch('http://localhost:5000/api/wishlist/add', {
+            const res = await fetch('https://shopmern-9ggl.onrender.com/api/wishlist/add', {
                 method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -38,7 +38,7 @@ export function WishlistProvider({ children }) {
 
     const removeFromWishlist = useCallback(async (userId, productId) => {
         try {
-            const res  = await fetch(`http://localhost:5000/api/wishlist/${userId}/${productId}`, {
+            const res  = await fetch(`https://shopmern-9ggl.onrender.com/api/wishlist/${userId}/${productId}`, {
                 method: 'DELETE'
             });
             const data = await res.json();

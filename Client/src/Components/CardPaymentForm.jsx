@@ -38,7 +38,7 @@ function CardPaymentForm({ amount, disabled = false, onValidateCheckout, onPayme
       setProcessing(true);
       setError("");
 
-      const intentResponse = await fetch("http://localhost:5000/api/payment/create-payment-intent", {
+      const intentResponse = await fetch("https://shopmern-9ggl.onrender.com/api/payment/create-payment-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount, currency: "pkr" }),

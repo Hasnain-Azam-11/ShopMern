@@ -163,7 +163,7 @@ function Checkout() {
   const submitOrderRequest = async (orderData) => {
     setPlacingOrder(true);
     try {
-      const response = await fetch('http://localhost:5000/api/orders/create', {
+      const response = await fetch('https://shopmern-9ggl.onrender.com/api/orders/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)

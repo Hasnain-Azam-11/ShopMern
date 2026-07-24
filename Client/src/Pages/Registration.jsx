@@ -40,7 +40,7 @@ function Register() {
     setIsSubmitting(true); // ✅ UPDATED
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/createUser', {
+      const response = await fetch('https://shopmern-9ggl.onrender.com/api/users/createUser', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -10,7 +10,7 @@ function Woman() {
   useEffect(() => {
     async function getProducts() {
       try {
-        const response = await fetch("http://localhost:5000/api/products");
+        const response = await fetch("https://shopmern-9ggl.onrender.com/api/products");
         const data = await response.json();
         const filtered = data.filter((p) => p.gender === "women");
         setProducts(filtered);

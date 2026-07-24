@@ -37,7 +37,7 @@ export const CartProvider = ({ children }) => {
         setError(null);
         
         try {
-            const response = await fetch(`http://localhost:5000/api/cart/${userId}`);
+            const response = await fetch(`https://shopmern-9ggl.onrender.com/api/cart/${userId}`);
             if (!response.ok) throw new Error('Failed to fetch cart');
             const data = await response.json();
             setCart(data);
@@ -56,7 +56,7 @@ export const CartProvider = ({ children }) => {
         if (!userId || !productId) return;
         
         try {
-            const response = await fetch('http://localhost:5000/api/cart/add', {
+            const response = await fetch('https://shopmern-9ggl.onrender.com/api/cart/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -82,7 +82,7 @@ export const CartProvider = ({ children }) => {
         if (!userId || !productId) return;
         
         try {
-            const response = await fetch('http://localhost:5000/api/cart/remove', {  
+            const response = await fetch('https://shopmern-9ggl.onrender.com/api/cart/remove', {  
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId, productId })
@@ -103,7 +103,7 @@ export const CartProvider = ({ children }) => {
         if (!userId || !productId) return;
         
         try {
-            const response = await fetch('http://localhost:5000/api/cart/update', {
+            const response = await fetch('https://shopmern-9ggl.onrender.com/api/cart/update', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId, productId, quantity })
@@ -124,7 +124,7 @@ export const CartProvider = ({ children }) => {
         if (!userId) return;
         
         try {
-            const response = await fetch('http://localhost:5000/api/cart/clear', {
+            const response = await fetch('https://shopmern-9ggl.onrender.com/api/cart/clear', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId })
