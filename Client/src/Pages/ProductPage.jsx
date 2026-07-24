@@ -1,6 +1,6 @@
 import NavBar from "../Components/NavBar";
 import Footer from "../Components/Footer";
-import { ProductCard } from "../components/ProductCard";
+import { ProductCard } from "../Components/ProductCard";
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ChevronDown, ChevronLeft, ChevronRight, Minus, Plus, Heart, X } from "lucide-react";
