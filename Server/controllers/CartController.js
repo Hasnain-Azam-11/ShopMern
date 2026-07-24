@@ -15,6 +15,16 @@ const addToCart = async (req, res) => {
             return res.status(400).json({ message: 'Insufficient stock' });
         }
 
+        // NEW - Get image URL safely, handles both array and plain string cases.
+        // Using product.imageURL[0] directly breaks if imageURL is a plain String,
+        // since [0] would grab just the first CHARACTER of the URL, not the full link.
+        let productImage = '';
+        if (Array.isArray(product.imageURL) && product.imageURL.length > 0) {
+            productImage = product.imageURL[0];
+        } else if (typeof product.imageURL === 'string') {
+            productImage = product.imageURL;
+        }
+
         // Find existing cart or create new one
         let cart = await Cart.findOne({ userId });
 
@@ -32,7 +42,7 @@ const addToCart = async (req, res) => {
                     productId,
                     name: product.name,
                     price: product.price,
-                    imageURL: product.imageURL[0] || '',
+                    imageURL: productImage,
                     quantity
                 });
             }
@@ -44,7 +54,7 @@ const addToCart = async (req, res) => {
                     productId,
                     name: product.name,
                     price: product.price,
-                    imageURL: product.imageURL[0] || '',
+                    imageURL: productImage,
                     quantity
                 }]
             });

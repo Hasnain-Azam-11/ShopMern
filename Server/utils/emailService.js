@@ -217,11 +217,11 @@ const sendContactEmail = async (data) => {
         };
 
         await transporter.sendMail(mailOptions);
-        console.log(`✅ Contact email received from ${email}`);
+        console.log(`Contact email received from ${email}`);
         return true;
 
     } catch (error) {
-        console.error('❌ Error sending contact email:', error);
+        console.error(' Error sending contact email:', error);
         throw error;
     }
 };
@@ -253,11 +253,11 @@ const sendNewsletterEmail = async (email) => {
         };
 
         await transporter.sendMail(mailOptions);
-        console.log(`✅ Newsletter email sent to ${email}`);
+        console.log(` Newsletter email sent to ${email}`);
         return true;
 
     } catch (error) {
-        console.error('❌ Error sending newsletter email:', error);
+        console.error(' Error sending newsletter email:', error);
         throw error;
     }
 };
@@ -275,11 +275,11 @@ const sendAbandonedCartEmail = async (email, userName, cartItems, totalAmount) =
             text: `Hi ${userName || 'there'},\n\nYou left items in your cart! Your cart total is Rs. ${totalAmount.toLocaleString()}. Visit our store to complete your order.\n\n${process.env.FRONTEND_URL || process.env.CLIENT_URL || 'http://localhost:5173'}/cart`
         });
 
-        console.log(`✅ Abandoned cart email sent to ${email}`);
+        console.log(` Abandoned cart email sent to ${email}`);
         return true;
 
     } catch (error) {
-        console.error('❌ Failed to send abandoned cart email:', error.message);
+        console.error('Failed to send abandoned cart email:', error.message);
         return false;
     }
 };
