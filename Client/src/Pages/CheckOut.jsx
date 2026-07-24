@@ -1,7 +1,7 @@
 import NavBar from "../Components/NavBar";
 import Footer from "../Components/Footer";
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Components/ui/button";
 import { ChevronDown, Lock, Trash2, Minus, Plus, Loader2 } from "lucide-react";
 import { useCart } from "../Context/CartContext";
 import StripeWrapper from "../Components/StripeWrapper";

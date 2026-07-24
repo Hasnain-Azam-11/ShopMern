@@ -1,8 +1,8 @@
 import NavBar from "../Components/NavBar";
 import Footer from "../Components/Footer";
 import { ProductCard } from "../Components/ProductCard";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/Components/ui/button";
+import { Badge } from "@/Components/ui/badge";
 import { ArrowRight, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";

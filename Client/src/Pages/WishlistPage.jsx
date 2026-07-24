@@ -6,7 +6,7 @@ import { useWishlist } from "../Context/WishlistContext";
 import { useCart } from "../Context/CartContext";
 import { Trash2, ShoppingCart, Heart } from "lucide-react";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/Components/ui/sonner";
 import { getCurrentUserId } from "../utils/auth";
 
 function WishlistPage() {
@@ -14,10 +14,7 @@ function WishlistPage() {
     const { addToCart } = useCart();
     const navigate  = useNavigate();
 
-    // ✅ UPDATED — removed the blocking `if (!userId) { alert(...); return; }` that was
-    // here before useEffect. That broke Rules of Hooks (useEffect below would get
-    // skipped whenever userId was null). Now userId is just a plain value, and we
-    // render a proper logged-out state further down instead of returning early here.
+
     const userId = getCurrentUserId();
 
     const items     = wishlist?.items || [];

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
+import { Separator } from "@/Components/ui/separator";
 import { Eye, EyeOff, Lock, Mail, User, Phone } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 

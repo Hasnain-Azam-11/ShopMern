@@ -7,7 +7,7 @@ import { ChevronDown, ChevronLeft, ChevronRight, Minus, Plus, Heart, X } from "l
 import { useCart } from "../Context/CartContext";
 import { useWishlist } from "../Context/WishlistContext";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/Components/ui/sonner";
 import { getCurrentUserId } from "../utils/auth"; 
 
 function ProductPage() {
