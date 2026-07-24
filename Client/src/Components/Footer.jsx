@@ -19,18 +19,18 @@ export default function Footer() {
               Your one-stop destination for the latest fashion trends. Quality clothing delivered to your door.
             </p>
             <div className="flex items-center gap-3 mt-2">
-              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors">
+              <Link to="https://facebook.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <Facebook size={20} />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors">
+              </Link>
+              <Link to="https://instagram.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <Instagram size={20} />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors">
+              </Link>
+              <Link to="https://twitter.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <Twitter size={20} />
-              </a>
-              <a href="https://youtube.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors">
+              </Link>
+              <Link to="https://youtube.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <Youtube size={20} />
-              </a>
+              </Link>
             </div>
           </div>
 

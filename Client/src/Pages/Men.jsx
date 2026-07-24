@@ -43,18 +43,18 @@ function Man() {
             Man
           </h1>
           <div className="flex items-center gap-10">
-            <a
+            {/* <a
               href="#collection"
               className="text-xs uppercase tracking-[0.3em] font-medium border-b border-white pb-0.5 hover:text-gray-300 hover:border-gray-300 transition-colors"
             >
               Shop New Arrivals
-            </a>
-            <a
+            </a> */}
+            {/* <a
               href="#collection"
               className="text-xs uppercase tracking-[0.3em] font-medium border-b border-white pb-0.5 hover:text-gray-300 hover:border-gray-300 transition-colors"
             >
               View Sale
-            </a>
+            </a> */}
           </div>
         </div>
       </section>
@@ -113,12 +113,12 @@ function Man() {
           <p className="text-gray-300 mb-6 max-w-md">
             Fresh styles for every occasion. From casual to formal — we've got you covered.
           </p>
-          <a
+          {/* <a
             href="#collection"
             className="bg-white text-black px-8 py-3 font-semibold text-sm hover:bg-gray-200 transition-colors"
           >
             Shop Now
-          </a>
+          </a> */}
         </div>
       </section>
 
