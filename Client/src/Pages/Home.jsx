@@ -1,6 +1,6 @@
 import NavBar from "../Components/NavBar";
 import Footer from "../Components/Footer";
-import { ProductCard } from "../components/ProductCard";
+import { ProductCard } from "../Components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Search } from "lucide-react";
