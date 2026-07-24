@@ -64,13 +64,11 @@ export default function Navbar() {
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
 
             <div className="text-3xl font-bold tracking-widest text-black uppercase">
-              <a href="/">SHOPMERN</a>
+              <Link to="/">SHOPMERN</Link>
             </div>
 
             <div className="hidden md:flex items-center gap-8 text-xs font-medium text-black tracking-widest uppercase">
-              {/* <a href="/women" className="hover:text-gray-400 transition-colors">Woman</a>
-              <a href="/men"   className="hover:text-gray-400 transition-colors">Men</a>
-              <a href="/kids"  className="hover:text-gray-400 transition-colors">Kids</a> */}
+        
               <Link to="/men" className="text-black-400 hover:text-white text-sm transition-colors">Men</Link>
             <Link to="/women" className="text-black-400 hover:text-white text-sm transition-colors">Women</Link>
             <Link to="/kids" className="text-black-400 hover:text-white text-sm transition-colors">Kids</Link>
@@ -179,9 +177,9 @@ export default function Navbar() {
 
           {menuOpen && (
             <div className="md:hidden border-t border-gray-200 px-6 py-4 flex flex-col gap-4 bg-white text-xs font-medium text-black tracking-widest uppercase">
-              <a href="/women" className="hover:text-gray-400 transition-colors">Woman</a>
-              <a href="/men"   className="hover:text-gray-400 transition-colors">Men</a>
-              <a href="/kids"  className="hover:text-gray-400 transition-colors">Kids</a>
+              <Link to="/women" className="hover:text-gray-400 transition-colors">Woman</Link>
+              <Link to="/men"   className="hover:text-gray-400 transition-colors">Men</Link>
+              <Link to="/kids"  className="hover:text-gray-400 transition-colors">Kids</Link>
             </div>
           )}
         </nav>

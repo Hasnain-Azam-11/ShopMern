@@ -4,9 +4,9 @@ import { ProductCard } from "../Components/ProductCard";
 import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
 import { ArrowRight, Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 const categories = [
   { name: "All" },
   { name: "shirts" },
@@ -75,18 +75,18 @@ function Home() {
             Summer Sale
           </h1>
           <div className="flex items-center gap-10">
-            <a
-              href="/women"
+            <Link
+              to="/women"
               className="text-xs uppercase tracking-[0.3em] font-medium border-b border-white pb-0.5 hover:text-gray-300 hover:border-gray-300 transition-colors cursor-pointer"
             >
               Shop Woman
-            </a>
-            <a
-              href="/men"
+            </Link>
+            <Link
+              to="/men"
               className="text-xs uppercase tracking-[0.3em] font-medium border-b border-white pb-0.5 hover:text-gray-300 hover:border-gray-300 transition-colors cursor-pointer"
             >
               Shop Man
-            </a>
+            </Link>
           </div>
         </div>
       </section>
